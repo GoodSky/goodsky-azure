@@ -195,7 +195,9 @@ app.get("/trafficmon", function(req, res) {
           res.send('unrecognized direction');
           return;
    }
-
+   
+   // this try-catch is a terrible way to debug...
+   try {
    var bingResult = { data: "" };
    queryBing(start, end, bingResult)
         .then(() => {
@@ -249,6 +251,10 @@ app.get("/trafficmon", function(req, res) {
             console.log(`Q sequence caught error ${error}`);
             res.send(500);
         });
+    } catch (err)
+    {
+        res.send(err);
+    }
 });
 
 // * * * * * * * * * * * * * * * * * * * * * * * * 
