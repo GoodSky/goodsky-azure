@@ -2,14 +2,14 @@
 /// <reference path="./DefinitelyTyped/express/express.d.ts" />
 /// <reference path="./utils.ts" />
 
-// var q = require('q');
+var q = require('q');
 // var fs = require('fs');
 // var http = require('http');
 
 var express = require('express');
 // var azure = require('azure-storage');
 
-// var utils = require('./utils');
+var utils = require('./utils');
 
 var app = express();
 
@@ -130,6 +130,15 @@ var work = encodeURI('City Center Bellevue WA');
 //     return deferred.promise;
 // }
 
+var testQ = function()
+{
+     var deferred = q.defer();
+     
+     setTimeout(() => deferred.resolve(), 2000);
+     
+     return deferred.promise;
+}
+
 // * * * * * * * * * * * * * * * * * * * * * * * * 
 // URI: /ping
 // ping the service to make sure it is up
@@ -147,38 +156,44 @@ app.get("/ping", function(req, res) {
 //    3) query NOAA public weather API
 // store query results to azure table
 // // * * * * * * * * * * * * * * * * * * * * * * * * 
-// app.get("/trafficmon", function(req, res) {
-//    var direction = req.query.direction;
-//    var store = req.query.store;
+app.get("/trafficmon", function(req, res) {
+   var direction = req.query.direction;
+   var store = req.query.store;
    
-//    if (!direction || !store)
-//    {
-//        res.status(400);
-//        res.send('malformed request! requires direction and store flag');
-//        return;
-//    }
+   if (!direction || !store)
+   {
+       res.status(400);
+       res.send('malformed request! requires direction and store flag');
+       return;
+   }
    
-//    var start;
-//    var end;
-//    switch (direction)
-//    {
-//        case 'towork':
-//           start = home;
-//           end = work;
-//           break;
+   var start;
+   var end;
+   switch (direction)
+   {
+       case 'towork':
+          start = home;
+          end = work;
+          break;
        
-//        case 'tohome':
-//           start = work;
-//           end = home;
-//           break;
+       case 'tohome':
+          start = work;
+          end = home;
+          break;
           
-//        default:
-//           res.status(400);
-//           res.send('unrecognized direction');
-//           return;
-//    }
+       default:
+          res.status(400);
+          res.send('unrecognized direction');
+          return;
+   }
    
-//    // this try-catch is a terrible way to debug...
+   testQ()
+      .then(testQ())
+      .then( () => {
+         res.send("Done!"); 
+      });
+   
+   // this try-catch is a terrible way to debug...
 //    try {
 //    var bingResult = { data: "" };
 //    queryBing(start, end, bingResult)
@@ -237,7 +252,7 @@ app.get("/ping", function(req, res) {
 //     {
 //         res.send(err);
 //     }
-// });
+});
 
 // * * * * * * * * * * * * * * * * * * * * * * * * 
 // Start running Express node.js application

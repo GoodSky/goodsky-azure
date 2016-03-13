@@ -1,12 +1,12 @@
 /// <reference path="./DefinitelyTyped/node/node.d.ts" />
 /// <reference path="./DefinitelyTyped/express/express.d.ts" />
 /// <reference path="./utils.ts" />
-// var q = require('q');
+var q = require('q');
 // var fs = require('fs');
 // var http = require('http');
 var express = require('express');
 // var azure = require('azure-storage');
-// var utils = require('./utils');
+var utils = require('./utils');
 var app = express();
 var home = encodeURI('23216 27th Dr SE Bothell WA 98021');
 var work = encodeURI('City Center Bellevue WA');
@@ -108,6 +108,11 @@ var work = encodeURI('City Center Bellevue WA');
 //     });
 //     return deferred.promise;
 // }
+var testQ = function () {
+    var deferred = q.defer();
+    setTimeout(() => deferred.resolve(), 2000);
+    return deferred.promise;
+};
 // * * * * * * * * * * * * * * * * * * * * * * * * 
 // URI: /ping
 // ping the service to make sure it is up
@@ -124,81 +129,84 @@ app.get("/ping", function (req, res) {
 //    3) query NOAA public weather API
 // store query results to azure table
 // // * * * * * * * * * * * * * * * * * * * * * * * * 
-// app.get("/trafficmon", function(req, res) {
-//    var direction = req.query.direction;
-//    var store = req.query.store;
-//    if (!direction || !store)
-//    {
-//        res.status(400);
-//        res.send('malformed request! requires direction and store flag');
-//        return;
-//    }
-//    var start;
-//    var end;
-//    switch (direction)
-//    {
-//        case 'towork':
-//           start = home;
-//           end = work;
-//           break;
-//        case 'tohome':
-//           start = work;
-//           end = home;
-//           break;
-//        default:
-//           res.status(400);
-//           res.send('unrecognized direction');
-//           return;
-//    }
-//    // this try-catch is a terrible way to debug...
-//    try {
-//    var bingResult = { data: "" };
-//    queryBing(start, end, bingResult)
-//         .then(() => {
-//             var obj = JSON.parse(bingResult.data);
-//             var resources  = obj.resourceSets[0].resources[0];
-//             var distanceKm = resources.travelDistance;
-//             var distanceMi = distanceKm * 0.62137119;
-//             var estimateSec = resources.travelDuration;
-//             var estimateMin = estimateSec / 60.0;
-//             var estimateTrafficSec = resources.travelDurationTraffic;
-//             var estimateTrafficMin = estimateTrafficSec / 60.0;
-//             console.log(`distance: ${distanceKm} Km (${distanceMi} Miles)`);
-//             console.log(`time without traffic: ${estimateSec} Secs (${estimateMin} Mins)`);
-//             console.log(`time with traffic: ${estimateTrafficSec} Secs (${estimateTrafficMin} Mins)`);
-//             var trafficRow = {
-//                 PartitionKey: { '_' : utils.Utils.getCurrentDate() },
-//                 RowKey: { '_' : utils.Utils.getFullDateString() },
-//                 distance: { '_' : `${distanceMi}` },
-//                 time: { '_' : `${estimateMin}` },
-//                 trafficTime: { '_' : `${estimateTrafficMin}` }
-//             };
-//             // Store in Azure Table
-//             var tableService = setupAzureTable();
-//             tableService.createTableIfNotExists("traffictimes", function(error) { 
-//                     if (error) {
-//                         console.log(error); 
-//                     }
-//                     tableService.insertEntity("traffictimes", trafficRow, function (error, result, response) {
-//                         console.log("Azure Table Result: " + result);
-//                         console.log("Azure Table Response: " + response);
-//                         if (error) {
-//                             console.log("Azure Table Error: " + error);
-//                             res.send(500);
-//                         }
-//                         res.send(200);
-//                     });
-//             });
-//         })
-//         .catch( (error) => {
-//             console.log(`Q sequence caught error ${error}`);
-//             res.send(500);
-//         });
-//     } catch (err)
-//     {
-//         res.send(err);
-//     }
-// });
+app.get("/trafficmon", function (req, res) {
+    var direction = req.query.direction;
+    var store = req.query.store;
+    if (!direction || !store) {
+        res.status(400);
+        res.send('malformed request! requires direction and store flag');
+        return;
+    }
+    var start;
+    var end;
+    switch (direction) {
+        case 'towork':
+            start = home;
+            end = work;
+            break;
+        case 'tohome':
+            start = work;
+            end = home;
+            break;
+        default:
+            res.status(400);
+            res.send('unrecognized direction');
+            return;
+    }
+    testQ()
+        .then(testQ())
+        .then(() => {
+        res.send("Done!");
+    });
+    // this try-catch is a terrible way to debug...
+    //    try {
+    //    var bingResult = { data: "" };
+    //    queryBing(start, end, bingResult)
+    //         .then(() => {
+    //             var obj = JSON.parse(bingResult.data);
+    //             var resources  = obj.resourceSets[0].resources[0];
+    //             var distanceKm = resources.travelDistance;
+    //             var distanceMi = distanceKm * 0.62137119;
+    //             var estimateSec = resources.travelDuration;
+    //             var estimateMin = estimateSec / 60.0;
+    //             var estimateTrafficSec = resources.travelDurationTraffic;
+    //             var estimateTrafficMin = estimateTrafficSec / 60.0;
+    //             console.log(`distance: ${distanceKm} Km (${distanceMi} Miles)`);
+    //             console.log(`time without traffic: ${estimateSec} Secs (${estimateMin} Mins)`);
+    //             console.log(`time with traffic: ${estimateTrafficSec} Secs (${estimateTrafficMin} Mins)`);
+    //             var trafficRow = {
+    //                 PartitionKey: { '_' : utils.Utils.getCurrentDate() },
+    //                 RowKey: { '_' : utils.Utils.getFullDateString() },
+    //                 distance: { '_' : `${distanceMi}` },
+    //                 time: { '_' : `${estimateMin}` },
+    //                 trafficTime: { '_' : `${estimateTrafficMin}` }
+    //             };
+    //             // Store in Azure Table
+    //             var tableService = setupAzureTable();
+    //             tableService.createTableIfNotExists("traffictimes", function(error) { 
+    //                     if (error) {
+    //                         console.log(error); 
+    //                     }
+    //                     tableService.insertEntity("traffictimes", trafficRow, function (error, result, response) {
+    //                         console.log("Azure Table Result: " + result);
+    //                         console.log("Azure Table Response: " + response);
+    //                         if (error) {
+    //                             console.log("Azure Table Error: " + error);
+    //                             res.send(500);
+    //                         }
+    //                         res.send(200);
+    //                     });
+    //             });
+    //         })
+    //         .catch( (error) => {
+    //             console.log(`Q sequence caught error ${error}`);
+    //             res.send(500);
+    //         });
+    //     } catch (err)
+    //     {
+    //         res.send(err);
+    //     }
+});
 // * * * * * * * * * * * * * * * * * * * * * * * * 
 // Start running Express node.js application
 var port = process.env.PORT || 1337;
