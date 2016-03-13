@@ -134,7 +134,7 @@ var testQ = function()
 {
      var deferred = q.defer();
      
-     setTimeout(() => deferred.resolve(), 2000);
+     setTimeout(function() { deferred.resolve() }, 2000);
      
      return deferred.promise;
 }
@@ -189,7 +189,7 @@ app.get("/trafficmon", function(req, res) {
    
    testQ()
       .then(testQ())
-      .then( () => {
+      .then(function() {
          res.send("Done!"); 
       });
    
