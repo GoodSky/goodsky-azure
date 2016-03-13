@@ -1,12 +1,29 @@
 {
-    "name": "goodsky-azure",
-    "version": "1.0.0",
-    "dependencies": {
-        "q": "1.4.1",
-        "fs": "0.0.2",
-        "http": "*",
-        "express": "4.13.4",
-        "azure-storage": "0.8.0",
-        "mobileservice-config": "1.0.0"
-    }
+  "name": "goodsky-azure",
+  "version": "1.0.1",
+  "private": true,
+  "dependencies": {
+    "azure-storage": "^0.9.0",
+    "express": "^4.13.4",
+    "fs": "0.0.2",
+    "http": "0.0.0",
+    "mobileservice-config": "^1.0.0",
+    "q": "^1.4.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "description": "repository for azure deployment",
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GoodSky/goodsky-azure.git"
+  },
+  "author": "goodsky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GoodSky/goodsky-azure/issues"
+  },
+  "homepage": "https://github.com/GoodSky/goodsky-azure#readme"
 }
