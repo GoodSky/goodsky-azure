@@ -2,8 +2,11 @@
     "name": "goodsky-azure",
     "version": "1.0.0",
     "dependencies": {
-        "express": "*",
-        "q": "*",
-        "azure-storage": "*"
+        "q": "1.4.1",
+        "fs": "0.0.2",
+        "http": "*",
+        "express": "4.13.4",
+        "azure-storage": "0.8.0",
+        "mobileservice-config": "1.0.0"
     }
 }
