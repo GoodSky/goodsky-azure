@@ -6,7 +6,7 @@ var fs = require('fs');
 var http = require('http');
 var express = require('express');
 var azure = require('azure-storage');
-// var settings = require('mobileservice-config').appSettings;
+var settings = require('mobileservice-config').appSettings;
 var utils = require('./utils');
 var app = express();
 var home = encodeURI('23216 27th Dr SE Bothell WA 98021');
@@ -32,14 +32,12 @@ var setupAzureTable = function () {
 var queryBing = function (start, end, result) {
     var deferred = q.defer();
     var bingKey = fs.readFileSync('_private/bing.txt');
-    // if (!bingKey)
-    // {
-    //     bingKey = settings.BING_KEY;
-    //     if (!bingKey)
-    //     {
-    //         console.log("COULD NOT READ BING KEY");
-    //     }
-    // }
+    if (!bingKey) {
+        bingKey = settings.BING_KEY;
+        if (!bingKey) {
+            console.log("COULD NOT READ BING KEY");
+        }
+    }
     var options = {
         host: 'dev.virtualearth.net',
         path: `/REST/V1/Routes/Driving?wp.0=${start}&wp.1=${end}&key=${bingKey}`
@@ -63,14 +61,12 @@ var queryBing = function (start, end, result) {
 var queryGoogle = function (start, end, result) {
     var deferred = q.defer();
     var googleKey = fs.readFileSync('_private/google.txt');
-    // if (!googleKey)
-    // {
-    //     googleKey = settings.GOOGLE_KEY;
-    //     if (!googleKey)
-    //     {
-    //         console.log("COULD NOT READ GOOGLE KEY");
-    //     }
-    // }
+    if (!googleKey) {
+        googleKey = settings.GOOGLE_KEY;
+        if (!googleKey) {
+            console.log("COULD NOT READ GOOGLE KEY");
+        }
+    }
     var options = {
         host: 'maps.googleapis.com',
         path: `/maps/api/directions/json?origin=${start}&destination=${end}&key=${googleKey}`

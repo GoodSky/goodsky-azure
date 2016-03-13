@@ -7,7 +7,7 @@ var http = require('http');
 
 var express = require('express');
 var azure = require('azure-storage');
-// var settings = require('mobileservice-config').appSettings;
+var settings = require('mobileservice-config').appSettings;
 
 var utils = require('./utils');
 
@@ -45,15 +45,15 @@ var queryBing = function(start, end, result)
 {
     var deferred = q.defer();
     var bingKey = fs.readFileSync('_private/bing.txt');
-    // if (!bingKey)
-    // {
-    //     bingKey = settings.BING_KEY;
+    if (!bingKey)
+    {
+        bingKey = settings.BING_KEY;
         
-    //     if (!bingKey)
-    //     {
-    //         console.log("COULD NOT READ BING KEY");
-    //     }
-    // }
+        if (!bingKey)
+        {
+            console.log("COULD NOT READ BING KEY");
+        }
+    }
     
     var options = {
         host: 'dev.virtualearth.net',
@@ -82,15 +82,15 @@ var queryGoogle = function(start, end, result)
 {
     var deferred = q.defer();
     var googleKey = fs.readFileSync('_private/google.txt');
-    // if (!googleKey)
-    // {
-    //     googleKey = settings.GOOGLE_KEY;
+    if (!googleKey)
+    {
+        googleKey = settings.GOOGLE_KEY;
         
-    //     if (!googleKey)
-    //     {
-    //         console.log("COULD NOT READ GOOGLE KEY");
-    //     }
-    // }
+        if (!googleKey)
+        {
+            console.log("COULD NOT READ GOOGLE KEY");
+        }
+    }
     
     var options = {
         host: 'maps.googleapis.com',

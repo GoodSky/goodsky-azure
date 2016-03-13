@@ -1,0 +1,10 @@
+{
+    "name": "goodsky-azure",
+    "version": "1.0.0",
+    "dependencies": {
+        "express": "*",
+        "q": "*",
+        "azure-storage": "*",
+        "fs": "*"
+    }
+}
