@@ -9,7 +9,7 @@ var q = require('q');
 var express = require('express');
 // var azure = require('azure-storage');
 
-var utils = require('./utils');
+// var utils = require('./utils');
 
 var app = express();
 
