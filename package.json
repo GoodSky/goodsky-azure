@@ -7,7 +7,6 @@
     "express": "^4.13.4",
     "fs": "0.0.2",
     "http": "0.0.0",
-    "mobileservice-config": "^1.0.0",
     "q": "^1.4.1"
   },
   "scripts": {
