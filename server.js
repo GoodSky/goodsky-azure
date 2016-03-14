@@ -15,14 +15,16 @@ var work = encodeURI('City Center Bellevue WA');
 // https://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-table-storage/
 var setupAzureTable = function () {
     var tableService;
-    var file = fs.readFileSync('_private/azure.txt');
-    if (file) {
+    var path = '_private/azure.txt';
+    try {
+        var file = fs.readFileSync();
         var creds = file.toString().split(',');
         var account = creds[0];
         var key = creds[1];
         tableService = azure.createTableService(account, key);
     }
-    else {
+    catch (e) {
+        // if we couldn't find the file there
         tableService = azure.createTableService();
     }
     return tableService;
