@@ -222,13 +222,13 @@ app.get("/trafficmon", function(req, res) {
     try {
         queryBing(start, end)
             .then(publishBingDataToAzureTable)
-            .catch(function(error) {
+            .then(function() {
+                res.status(200);
+                res.send('Success! Published data to Azure');
+            }, function(error) {
                 res.status(500);
-                res.send('Q ERROR: ' + error);
+                res.send('Failed to publish to Azure. Error: ' + error);
             });
-            
-        res.status(200);
-        res.send('Success! Published data to Azure');
      } catch (err)
      {
         res.status(500);
