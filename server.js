@@ -17,7 +17,7 @@ var setupAzureTable = function () {
     var tableService;
     var path = '_private/azure.txt';
     try {
-        var file = fs.readFileSync();
+        var file = fs.readFileSync(path);
         var creds = file.toString().split(',');
         var account = creds[0];
         var key = creds[1];
@@ -30,7 +30,7 @@ var setupAzureTable = function () {
     return tableService;
 };
 // query bing maps api for traffic times
-var queryBing = function (start, end) {
+var queryBing = function (direction, start, end) {
     var deferred = q.defer();
     var bingKey = fs.readFileSync('_private/bing.txt');
     var options = {
@@ -43,7 +43,7 @@ var queryBing = function (start, end) {
             aggregatedData += chunk;
         });
         res.on('end', function () {
-            deferred.resolve(aggregatedData);
+            deferred.resolve({ data: aggregatedData, direction: direction });
         });
     }).on('error', function (e) {
         console.log('error: ' + e);
@@ -55,7 +55,7 @@ var queryBing = function (start, end) {
 // SPECIFICALLY BING MAPS DATA
 var publishBingDataToAzureTable = function (data) {
     var deferred = q.defer();
-    var obj = JSON.parse(data);
+    var obj = JSON.parse(data.data);
     var resources = obj.resourceSets[0].resources[0];
     var distanceKm = resources.travelDistance;
     var distanceMi = distanceKm * 0.62137119;
@@ -74,12 +74,13 @@ var publishBingDataToAzureTable = function (data) {
         trafficTime: { '_': '' + estimateTrafficMin }
     };
     // Store in Azure Table
+    var tableName = 'traffictimes' + data.direction;
     var tableService = setupAzureTable();
-    tableService.createTableIfNotExists("traffictimes", function (error) {
+    tableService.createTableIfNotExists(tableName, function (error) {
         if (error) {
             deferred.reject(error);
         }
-        tableService.insertEntity("traffictimes", trafficRow, function (error, result, response) {
+        tableService.insertEntity(tableName, trafficRow, function (error, result, response) {
             if (error) {
                 deferred.reject(error);
             }
@@ -174,7 +175,7 @@ app.get("/trafficmon", function (req, res) {
             return;
     }
     try {
-        queryBing(start, end)
+        queryBing(direction, start, end)
             .then(publishBingDataToAzureTable)
             .then(function () {
             res.status(200);
