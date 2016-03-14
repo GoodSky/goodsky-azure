@@ -22,18 +22,17 @@ var work = encodeURI('City Center Bellevue WA');
 var setupAzureTable = function()
 {
     var tableService;
+    var path = '_private/azure.txt';
     
-    var file = fs.readFileSync('_private/azure.txt');
-    if (file)
-    {
+    try {
+        var file = fs.readFileSync();
         var creds = file.toString().split(',');
         var account = creds[0];
         var key = creds[1];
         
         tableService = azure.createTableService(account, key);
-    }
-    else
-    {
+    } catch (e) {
+        // if we couldn't find the file there
         tableService = azure.createTableService();
     }
     
