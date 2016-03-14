@@ -2,6 +2,10 @@
   "name": "goodsky-azure",
   "version": "1.0.1",
   "private": true,
+  "engines" : {
+    "node": "~0.10.5",
+    "npm": "~3.6.0"
+  },
   "dependencies": {
     "azure-storage": "~0.9.0",
     "express": "~4.13.4",
